@@ -1,0 +1,23 @@
+{
+  "active": "PrivaRepo",
+  "repositories": [
+    {
+      "name": "PrivaRepo",
+      "path": "/Users/maridibalashankar/Projects/privarepo",
+      "collection": "privarepo",
+      "bm25_dir": "/Users/maridibalashankar/Projects/privarepo/.bm25/privarepo"
+    },
+    {
+      "name": "TestRepo",
+      "path": "/Users/maridibalashankar/Projects/test_repo",
+      "collection": "testrepo",
+      "bm25_dir": "/Users/maridibalashankar/Projects/privarepo/.bm25/testrepo"
+    },
+    {
+      "name": "Agriculture",
+      "path": "/Users/maridibalashankar/agriculture_project",
+      "collection": "agriculture",
+      "bm25_dir": "/Users/maridibalashankar/Projects/privarepo/.bm25/agriculture"
+    }
+  ]
+}

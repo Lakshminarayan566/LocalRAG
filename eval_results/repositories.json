@@ -1,0 +1,14 @@
+{
+    "repositories": [
+      {
+        "name": "FastAPI",
+        "path": "/Users/.../FastAPI",
+        "collection": "fastapi_repo"
+      },
+      {
+        "name": "Compiler",
+        "path": "/Users/.../Compiler",
+        "collection": "compiler_repo"
+      }
+    ]
+  }

@@ -1,0 +1,9 @@
+.venv/
+__pycache__/
+*.pyc
+.chromadb/
+.bm25/
+.DS_Store
+eval_results/judge_logs/
+*.backup
+.git_backup/

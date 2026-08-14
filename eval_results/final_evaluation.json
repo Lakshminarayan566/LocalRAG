@@ -1,0 +1,432 @@
+{
+  "timestamp": "2026-08-14T04:00:55.912127+00:00",
+  "system_info": {
+    "python_version": "3.11.15",
+    "os": "Darwin",
+    "cpu_count": 8,
+    "ram_gb": 8.59
+  },
+  "collection_stats": {
+    "total_chunks": 15,
+    "unique_files": 2,
+    "languages": {
+      "python": 15
+    },
+    "chunk_types": {
+      "imports": 2,
+      "function": 13
+    },
+    "collection_name": "agriculture",
+    "persist_dir": "/Users/maridibalashankar/Projects/privarepo/.chromadb",
+    "embedding_model": "sentence-transformers/all-MiniLM-L6-v2",
+    "embedding_dimension": 384,
+    "bm25_index_size": 15,
+    "bm25_index_built": true
+  },
+  "retrieval": {
+    "precision_at_k": 0.0,
+    "recall_at_k": 0.0,
+    "mrr": 0.0,
+    "hit_rate": 0.0,
+    "k": 5,
+    "n_queries": 15,
+    "precision_std": 0.0,
+    "recall_std": 0.0,
+    "per_query": [
+      {
+        "query_id": "q001",
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0,
+        "reciprocal_rank": 0.0,
+        "hit": false,
+        "k": 5,
+        "retrieved_chunk_ids": [],
+        "relevant_chunk_ids": [
+          "9ab1ebb32fb3bdb9ddb82968"
+        ]
+      },
+      {
+        "query_id": "q002",
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0,
+        "reciprocal_rank": 0.0,
+        "hit": false,
+        "k": 5,
+        "retrieved_chunk_ids": [],
+        "relevant_chunk_ids": [
+          "dd26bd805d97c6eb6fe9d55b"
+        ]
+      },
+      {
+        "query_id": "q003",
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0,
+        "reciprocal_rank": 0.0,
+        "hit": false,
+        "k": 5,
+        "retrieved_chunk_ids": [],
+        "relevant_chunk_ids": [
+          "2355e886260d639202e268be",
+          "5f39cb923480ae79bd29ebad"
+        ]
+      },
+      {
+        "query_id": "q004",
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0,
+        "reciprocal_rank": 0.0,
+        "hit": false,
+        "k": 5,
+        "retrieved_chunk_ids": [],
+        "relevant_chunk_ids": [
+          "db8fadd179d6a98d44b9df1a"
+        ]
+      },
+      {
+        "query_id": "q005",
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0,
+        "reciprocal_rank": 0.0,
+        "hit": false,
+        "k": 5,
+        "retrieved_chunk_ids": [],
+        "relevant_chunk_ids": [
+          "ec8c10a6971a254c9fca41b2"
+        ]
+      },
+      {
+        "query_id": "q006",
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0,
+        "reciprocal_rank": 0.0,
+        "hit": false,
+        "k": 5,
+        "retrieved_chunk_ids": [],
+        "relevant_chunk_ids": [
+          "3b3cc6ebd5ca6a2843b35b4e",
+          "c186318ca612769ebcea4982"
+        ]
+      },
+      {
+        "query_id": "q007",
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0,
+        "reciprocal_rank": 0.0,
+        "hit": false,
+        "k": 5,
+        "retrieved_chunk_ids": [],
+        "relevant_chunk_ids": [
+          "09ab44a5512a86e3cb2710b0"
+        ]
+      },
+      {
+        "query_id": "q008",
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0,
+        "reciprocal_rank": 0.0,
+        "hit": false,
+        "k": 5,
+        "retrieved_chunk_ids": [],
+        "relevant_chunk_ids": [
+          "c8aa198d1b045c91da4e6ceb",
+          "230ce5d96256f78a518c0f37",
+          "1b41228b9e6a7b501b21c8fa"
+        ]
+      },
+      {
+        "query_id": "q009",
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0,
+        "reciprocal_rank": 0.0,
+        "hit": false,
+        "k": 5,
+        "retrieved_chunk_ids": [],
+        "relevant_chunk_ids": [
+          "ce9d6071a240d5be83ab91a2"
+        ]
+      },
+      {
+        "query_id": "q010",
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0,
+        "reciprocal_rank": 0.0,
+        "hit": false,
+        "k": 5,
+        "retrieved_chunk_ids": [],
+        "relevant_chunk_ids": [
+          "77839de35a914017f03b4369"
+        ]
+      },
+      {
+        "query_id": "q011",
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0,
+        "reciprocal_rank": 0.0,
+        "hit": false,
+        "k": 5,
+        "retrieved_chunk_ids": [],
+        "relevant_chunk_ids": [
+          "40aaedc1e5fb3b9385ce3425",
+          "dd8733edd76be6378bed6dcb"
+        ]
+      },
+      {
+        "query_id": "q012",
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0,
+        "reciprocal_rank": 0.0,
+        "hit": false,
+        "k": 5,
+        "retrieved_chunk_ids": [],
+        "relevant_chunk_ids": [
+          "fcc1c57b6f84470d5ed87dd5"
+        ]
+      },
+      {
+        "query_id": "q013",
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0,
+        "reciprocal_rank": 0.0,
+        "hit": false,
+        "k": 5,
+        "retrieved_chunk_ids": [],
+        "relevant_chunk_ids": [
+          "9e3c30eb47a24605117bc592",
+          "e3a4ef296f8c1c81ab35fb5e",
+          "ef8dd330adbffea547acb622"
+        ]
+      },
+      {
+        "query_id": "q014",
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0,
+        "reciprocal_rank": 0.0,
+        "hit": false,
+        "k": 5,
+        "retrieved_chunk_ids": [],
+        "relevant_chunk_ids": [
+          "fa11f7e5e2034dbe91a79d2e",
+          "c186318ca612769ebcea4982",
+          "007ab53e5f5a08c304a5363e",
+          "251243dad27fd8e046fdb8f8"
+        ]
+      },
+      {
+        "query_id": "q015",
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0,
+        "reciprocal_rank": 0.0,
+        "hit": false,
+        "k": 5,
+        "retrieved_chunk_ids": [],
+        "relevant_chunk_ids": [
+          "4a2553094c72af45332228c0",
+          "3537b574b236bbb88321cb82",
+          "52c7744a8151c0dca5f78783"
+        ]
+      }
+    ]
+  },
+  "generation": {
+    "faithfulness": 0.43333333333333335,
+    "answer_relevancy": 0.4666666666666667,
+    "context_precision": 0.0,
+    "context_recall": 0.2733333333333334,
+    "n_queries": 15,
+    "faithfulness_std": 0.1759328876372492,
+    "answer_relevancy_std": 0.12909944487358058,
+    "per_query": [
+      {
+        "query_id": "q001",
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.5,
+        "context_precision": 0.0,
+        "context_recall": 0.2
+      },
+      {
+        "query_id": "q002",
+        "faithfulness": 0.5,
+        "answer_relevancy": 0.5,
+        "context_precision": 0.0,
+        "context_recall": 0.2
+      },
+      {
+        "query_id": "q003",
+        "faithfulness": 0.5,
+        "answer_relevancy": 0.5,
+        "context_precision": 0.0,
+        "context_recall": 0.8
+      },
+      {
+        "query_id": "q004",
+        "faithfulness": 0.5,
+        "answer_relevancy": 0.5,
+        "context_precision": 0.0,
+        "context_recall": 0.0
+      },
+      {
+        "query_id": "q005",
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "context_precision": 0.0,
+        "context_recall": 0.0
+      },
+      {
+        "query_id": "q006",
+        "faithfulness": 0.5,
+        "answer_relevancy": 0.5,
+        "context_precision": 0.0,
+        "context_recall": 0.2
+      },
+      {
+        "query_id": "q007",
+        "faithfulness": 0.5,
+        "answer_relevancy": 0.5,
+        "context_precision": 0.0,
+        "context_recall": 0.8
+      },
+      {
+        "query_id": "q008",
+        "faithfulness": 0.5,
+        "answer_relevancy": 0.5,
+        "context_precision": 0.0,
+        "context_recall": 0.0
+      },
+      {
+        "query_id": "q009",
+        "faithfulness": 0.5,
+        "answer_relevancy": 0.5,
+        "context_precision": 0.0,
+        "context_recall": 0.0
+      },
+      {
+        "query_id": "q010",
+        "faithfulness": 0.5,
+        "answer_relevancy": 0.5,
+        "context_precision": 0.0,
+        "context_recall": 0.0
+      },
+      {
+        "query_id": "q011",
+        "faithfulness": 0.5,
+        "answer_relevancy": 0.5,
+        "context_precision": 0.0,
+        "context_recall": 0.8
+      },
+      {
+        "query_id": "q012",
+        "faithfulness": 0.5,
+        "answer_relevancy": 0.5,
+        "context_precision": 0.0,
+        "context_recall": 0.5
+      },
+      {
+        "query_id": "q013",
+        "faithfulness": 0.5,
+        "answer_relevancy": 0.5,
+        "context_precision": 0.0,
+        "context_recall": 0.2
+      },
+      {
+        "query_id": "q014",
+        "faithfulness": 0.5,
+        "answer_relevancy": 0.5,
+        "context_precision": 0.0,
+        "context_recall": 0.2
+      },
+      {
+        "query_id": "q015",
+        "faithfulness": 0.5,
+        "answer_relevancy": 0.5,
+        "context_precision": 0.0,
+        "context_recall": 0.2
+      }
+    ],
+    "n_failed": 0,
+    "failed_query_ids": [],
+    "judge_total_evaluations": 45,
+    "judge_fallback_count": 0,
+    "judge_fallback_rate": 0.0
+  },
+  "latency": {
+    "n_runs": 20,
+    "retrieval_p50_ms": 189.34266700000535,
+    "retrieval_p95_ms": 214.9074590000737,
+    "retrieval_p99_ms": 222.24404200005665,
+    "generation_p50_ms": 0.0,
+    "generation_p95_ms": 0.0,
+    "generation_p99_ms": 0.0,
+    "total_p50_ms": 189.3488339999294,
+    "total_p95_ms": 214.91449999996348,
+    "total_p99_ms": 222.25066700002571,
+    "memory_usage_mb": 27.921875,
+    "collection_size": 15,
+    "raw_retrieval_ms": [
+      214.9074590000737,
+      191.70233299996653,
+      193.8961669999344,
+      191.41658299997744,
+      191.95749999994405,
+      179.53433299999233,
+      184.8569999999654,
+      174.24466600004962,
+      183.401291999985,
+      179.044666999971,
+      207.36633399997118,
+      222.24404200005665,
+      195.67629200003012,
+      189.34266700000535,
+      186.093249999999,
+      193.26175000003332,
+      183.30945899992912,
+      208.0559579999317,
+      185.33562499999334,
+      181.31399999992937
+    ],
+    "raw_generation_ms": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "raw_total_ms": [
+      214.91449999996348,
+      191.70970799996212,
+      193.90295799996693,
+      191.42324999995708,
+      191.96437499999774,
+      179.5420839999906,
+      184.863082999982,
+      174.25091699999484,
+      183.4070419999989,
+      179.0510839999797,
+      207.3736250000593,
+      222.25066700002571,
+      195.68212499996207,
+      189.3488339999294,
+      186.09945900004732,
+      193.2678749999468,
+      183.3152080000673,
+      208.06208300007256,
+      185.3419159999703,
+      181.31979199995385
+    ],
+    "n_failed": 0
+  }
+}

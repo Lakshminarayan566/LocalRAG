@@ -1,0 +1,6 @@
+venv/
+chroma_db/
+__pycache__/
+*.pyc
+.env
+tree_sitter_chunker_fix.py

@@ -1,0 +1,11 @@
+# FastAPI backend dependencies.
+# Does NOT duplicate the existing backend's own requirements (ollama,
+# chromadb, sentence-transformers, rank_bm25, tree_sitter, etc.) — those
+# are assumed already installed for rag_pipeline.py / vector_store.py /
+# tree_sitter_chunker.py to import correctly, since this API imports
+# those modules directly and does not vendor or reimplement them.
+
+fastapi>=0.110.0
+uvicorn[standard]>=0.29.0
+pydantic>=2.6.0
+python-multipart>=0.0.9

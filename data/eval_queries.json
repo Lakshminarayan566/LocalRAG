@@ -1,0 +1,278 @@
+[
+  {
+    "query_id": "q001",
+    "question": "How does the repository indexing CLI command parse files and build the vector index?",
+    "expected_answer": "cmd_index in cli.py and index_repository in rag_pipeline.py walk the target directory, parse code with TreeSitterChunker, batch upsert chunks to VectorStore, and update the BM25 index.",
+    "relevant_chunk_ids": [
+      "9ab1ebb32fb3bdb9ddb82968"
+    ],
+    "relevant_files": [
+      "cli.py",
+      "rag_pipeline.py"
+    ],
+    "relevant_functions": [
+      "cmd_index",
+      "index_repository"
+    ],
+    "task_type": "explain",
+    "language_filter": "python"
+  },
+  {
+    "query_id": "q002",
+    "question": "How is application configuration loaded and validated?",
+    "expected_answer": "AppConfig loads configuration from environment variables and .env file, validating constraints like final_top_k <= rerank_candidates.",
+    "relevant_chunk_ids": [
+      "dd26bd805d97c6eb6fe9d55b"
+    ],
+    "relevant_files": [
+      "config.py"
+    ],
+    "relevant_functions": [
+      "validate",
+      "from_env"
+    ],
+    "task_type": "explain",
+    "language_filter": null
+  },
+  {
+    "query_id": "q003",
+    "question": "How does the evaluate CLI command run the evaluation suite?",
+    "expected_answer": "cmd_evaluate in cli.py and Evaluator in evaluator.py run retrieval and generation evaluation benchmarks and output summary metrics.",
+    "relevant_chunk_ids": [
+      "2355e886260d639202e268be",
+      "5f39cb923480ae79bd29ebad"
+    ],
+    "relevant_files": [
+      "cli.py",
+      "evaluator.py"
+    ],
+    "relevant_functions": [
+      "cmd_evaluate",
+      "run_full_benchmark",
+      "run_retrieval_benchmark"
+    ],
+    "task_type": "function_search",
+    "language_filter": "python"
+  },
+  {
+    "query_id": "q004",
+    "question": "How are code search results formatted and displayed in the CLI?",
+    "expected_answer": "_print_chunk_table creates a Rich Table with columns for rank, score, file, chunk type, function, lines, and displays code previews.",
+    "relevant_chunk_ids": [
+      "db8fadd179d6a98d44b9df1a"
+    ],
+    "relevant_files": [
+      "cli.py"
+    ],
+    "relevant_functions": [
+      "_print_chunk_table"
+    ],
+    "task_type": "explain",
+    "language_filter": null
+  },
+  {
+    "query_id": "q005",
+    "question": "How does the CLI benchmark command measure system latency?",
+    "expected_answer": "cmd_benchmark in cli.py and run_latency_benchmark in evaluator.py measure system latency metrics such as P50, P95, P99.",
+    "relevant_chunk_ids": [
+      "ec8c10a6971a254c9fca41b2"
+    ],
+    "relevant_files": [
+      "cli.py",
+      "evaluator.py"
+    ],
+    "relevant_functions": [
+      "cmd_benchmark",
+      "run_latency_benchmark"
+    ],
+    "task_type": "explain",
+    "language_filter": null
+  },
+  {
+    "query_id": "q006",
+    "question": "How does the hybrid retrieval pipeline work?",
+    "expected_answer": "Vector search and BM25 run in parallel. Their results are merged using Reciprocal Rank Fusion. A Cross Encoder then reranks the top candidates.",
+    "relevant_chunk_ids": [
+      "3b3cc6ebd5ca6a2843b35b4e",
+      "c186318ca612769ebcea4982"
+    ],
+    "relevant_files": [
+      "rag_pipeline.py"
+    ],
+    "relevant_functions": [
+      "retrieve",
+      "reciprocal_rank_fusion"
+    ],
+    "task_type": "explain",
+    "language_filter": null
+  },
+  {
+    "query_id": "q007",
+    "question": "What is the BM25 tokenization strategy?",
+    "expected_answer": "BM25 uses regex to extract identifier-like tokens and splits camelCase into sub-tokens for better recall.",
+    "relevant_chunk_ids": [
+      "09ab44a5512a86e3cb2710b0"
+    ],
+    "relevant_files": [
+      "rag_pipeline.py"
+    ],
+    "relevant_functions": [
+      "_tokenize"
+    ],
+    "task_type": "explain",
+    "language_filter": null
+  },
+  {
+    "query_id": "q008",
+    "question": "How are embeddings generated for code chunks?",
+    "expected_answer": "SentenceTransformer encodes enriched document text (including chunk type, name, docstring) in batches with normalize_embeddings=True.",
+    "relevant_chunk_ids": [
+      "c8aa198d1b045c91da4e6ceb",
+      "230ce5d96256f78a518c0f37",
+      "1b41228b9e6a7b501b21c8fa"
+    ],
+    "relevant_files": [
+      "vector_store.py"
+    ],
+    "relevant_functions": [
+      "embed",
+      "embed_query",
+      "add_chunks"
+    ],
+    "task_type": "explain",
+    "language_filter": null
+  },
+  {
+    "query_id": "q009",
+    "question": "What metadata is stored for each code chunk?",
+    "expected_answer": "Each chunk stores: chunk_type, language, file_path, start_line, end_line, function_name, class_name, parent_class, docstring_exists, is_async, decorators, parameters, return_type.",
+    "relevant_chunk_ids": [
+      "ce9d6071a240d5be83ab91a2"
+    ],
+    "relevant_files": [
+      "tree_sitter_chunker.py"
+    ],
+    "relevant_functions": [
+      "to_metadata"
+    ],
+    "task_type": "explain",
+    "language_filter": null
+  },
+  {
+    "query_id": "q010",
+    "question": "How does the LLM prompt enforce grounded answers?",
+    "expected_answer": "The system prompt explicitly prohibits hallucination, requires answers to be based only on retrieved context, and mandates structured output with ANSWER, REASONING, REFERENCED FILES, and FUNCTIONS USED sections.",
+    "relevant_chunk_ids": [
+      "77839de35a914017f03b4369"
+    ],
+    "relevant_files": [
+      "rag_pipeline.py"
+    ],
+    "relevant_functions": [
+      "build_prompt"
+    ],
+    "task_type": "explain",
+    "language_filter": null
+  },
+  {
+    "query_id": "q011",
+    "question": "What retry strategy is used for Ollama requests?",
+    "expected_answer": "Exponential backoff with jitter: base_delay * 2^(attempt-1) \u00b1 10% jitter, capped at 30 seconds, with max_retries configurable.",
+    "relevant_chunk_ids": [
+      "40aaedc1e5fb3b9385ce3425",
+      "dd8733edd76be6378bed6dcb"
+    ],
+    "relevant_files": [
+      "llm_interface.py"
+    ],
+    "relevant_functions": [
+      "generate",
+      "_backoff_delay"
+    ],
+    "task_type": "explain",
+    "language_filter": null
+  },
+  {
+    "query_id": "q012",
+    "question": "How are evaluation metrics computed for faithfulness?",
+    "expected_answer": "The LLM-as-judge approach sends (question, context, answer) to Ollama and asks it to score faithfulness 0-1. The response is parsed as JSON.",
+    "relevant_chunk_ids": [
+      "fcc1c57b6f84470d5ed87dd5"
+    ],
+    "relevant_files": [
+      "evaluator.py"
+    ],
+    "relevant_functions": [
+      "score_faithfulness"
+    ],
+    "task_type": "explain",
+    "language_filter": null
+  },
+  {
+    "query_id": "q013",
+    "question": "How does the interactive CLI mode handle user queries?",
+    "expected_answer": "cmd_interactive in cli.py, stream_generate in llm_interface.py, and demo_search handle interactive user queries and response streaming.",
+    "relevant_chunk_ids": [
+      "9e3c30eb47a24605117bc592",
+      "e3a4ef296f8c1c81ab35fb5e",
+      "ef8dd330adbffea547acb622"
+    ],
+    "relevant_files": [
+      "cli.py",
+      "llm_interface.py",
+      "rag_pipeline.py",
+      "example_usage.py"
+    ],
+    "relevant_functions": [
+      "cmd_interactive",
+      "stream_generate",
+      "generate_with_history",
+      "query"
+    ],
+    "task_type": "explain",
+    "language_filter": "python"
+  },
+  {
+    "query_id": "q014",
+    "question": "What is the difference between vector_search and BM25 search?",
+    "expected_answer": "vector_search finds semantically similar code using embedding cosine similarity. BM25 finds exact token matches with TF-IDF-like scoring. RRF combines both.",
+    "relevant_chunk_ids": [
+      "fa11f7e5e2034dbe91a79d2e",
+      "c186318ca612769ebcea4982",
+      "007ab53e5f5a08c304a5363e",
+      "251243dad27fd8e046fdb8f8"
+    ],
+    "relevant_files": [
+      "vector_store.py",
+      "rag_pipeline.py"
+    ],
+    "relevant_functions": [
+      "vector_search",
+      "search",
+      "retrieve"
+    ],
+    "task_type": "explain",
+    "language_filter": null
+  },
+  {
+    "query_id": "q015",
+    "question": "How does the export/import feature work for collection portability?",
+    "expected_answer": "export_collection() saves all chunks as newline-delimited JSON (chunk_id, document, metadata). import_collection() re-embeds and upserts them into a new ChromaDB collection.",
+    "relevant_chunk_ids": [
+      "4a2553094c72af45332228c0",
+      "3537b574b236bbb88321cb82",
+      "52c7744a8151c0dca5f78783"
+    ],
+    "relevant_files": [
+      "vector_store.py",
+      "example_usage.py"
+    ],
+    "relevant_functions": [
+      "export_collection",
+      "import_collection",
+      "demo_export_import"
+    ],
+    "task_type": "explain",
+    "language_filter": null
+  }
+]
