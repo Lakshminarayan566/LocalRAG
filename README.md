@@ -1,296 +1,533 @@
 # PrivaRepo 🔒
 
-**A Fully Local AI Code Intelligence Assistant**
+## Fully Offline Multi-Repository Code Intelligence
 
-PrivaRepo is a production-quality Retrieval-Augmented Generation (RAG) system for code intelligence. It runs **100% locally** — no data ever leaves your machine. Index any codebase, then ask questions, search functions, explain code, find bugs, and more — all powered by local LLMs via Ollama.
+PrivaRepo is a local AI-powered code intelligence platform for searching, understanding, and analyzing source-code repositories using Retrieval-Augmented Generation (RAG).
+
+The system combines syntax-aware code parsing, hybrid lexical + semantic retrieval, Reciprocal Rank Fusion (RRF), cross-encoder reranking, and locally hosted LLM inference through Ollama.
+
+The design is focused on keeping repository code local rather than sending source code to a cloud LLM API.
 
 ---
 
-## Architecture
+## ✨ Key Features
 
+- **Multi-repository support** — register, index, and switch between multiple local repositories.
+- **Syntax-aware code indexing** — Tree-sitter extracts logical code units such as functions, methods, classes, imports, and modules.
+- **Vector retrieval** — semantic search over indexed code embeddings.
+- **BM25 retrieval** — lexical retrieval based on query/code term matching.
+- **Hybrid retrieval** — combines vector and BM25 results.
+- **Reciprocal Rank Fusion (RRF)** — merges ranked retrieval results.
+- **Cross-encoder reranking** — refines candidate relevance before context generation.
+- **Local LLM inference** — Ollama-based inference without requiring a remote LLM API.
+- **Streaming responses** — answers can be streamed progressively to the web interface.
+- **Repository-grounded responses** — answers are generated from retrieved repository context.
+- **Source-aware results** — retrieved files, functions, classes, and line ranges can be shown with answers.
+- **Task-focused code analysis**:
+  - General Q&A
+  - Explain Code
+  - Find Bugs
+  - Similar Code
+  - Search Functions
+  - Search Classes
+- **CLI and REST API** support.
+- **Evaluation and benchmarking** for retrieval and generation performance.
+
+---
+
+# 🏗️ Architecture
+
+```text
+                        LOCAL REPOSITORY
+                               │
+                               ▼
+                     ┌───────────────────┐
+                     │    Tree-sitter    │
+                     │   Source Parsing  │
+                     └─────────┬─────────┘
+                               │
+                               ▼
+                   ┌────────────────────────┐
+                   │ Syntax-aware Chunking  │
+                   │                        │
+                   │ function / method      │
+                   │ class / imports        │
+                   │ module                 │
+                   └───────────┬────────────┘
+                               │
+                               ▼
+                     ┌──────────────────┐
+                     │ Metadata + Code  │
+                     │ Context          │
+                     └────────┬─────────┘
+                              │
+                 ┌────────────┴────────────┐
+                 ▼                         ▼
+        ┌─────────────────┐       ┌─────────────────┐
+        │ Vector Embedding│       │   BM25 Index    │
+        │ Sentence        │       │ Lexical Search  │
+        │ Transformers    │       │                 │
+        └────────┬────────┘       └────────┬────────┘
+                 │                         │
+                 ▼                         ▼
+        ┌─────────────────┐       ┌─────────────────┐
+        │    ChromaDB     │       │   BM25 Search   │
+        │ Vector Search   │       │     Results     │
+        └────────┬────────┘       └────────┬────────┘
+                 │                         │
+                 └────────────┬────────────┘
+                              ▼
+                 ┌──────────────────────────┐
+                 │ Reciprocal Rank Fusion   │
+                 │          (RRF)           │
+                 └────────────┬─────────────┘
+                              ▼
+                 ┌──────────────────────────┐
+                 │  Cross-Encoder Reranker  │
+                 └────────────┬─────────────┘
+                              ▼
+                 ┌──────────────────────────┐
+                 │  Retrieved Code Context  │
+                 └────────────┬─────────────┘
+                              ▼
+                 ┌──────────────────────────┐
+                 │      Prompt Builder      │
+                 │ Grounded task-specific   │
+                 │ instructions + context   │
+                 └────────────┬─────────────┘
+                              ▼
+                 ┌──────────────────────────┐
+                 │     Local Ollama LLM     │
+                 └────────────┬─────────────┘
+                              ▼
+                 ┌──────────────────────────┐
+                 │ Grounded Code Response   │
+                 │ answer + evidence +      │
+                 │ referenced files         │
+                 └──────────────────────────┘
 ```
-Code Repository
-      │
-      ▼
-Tree-sitter Parsing  ──── Python, Java, JavaScript, TypeScript
-      │                   AST-boundary chunks, full metadata
-      ▼
-Semantic Code Chunking ── function / method / class / imports / module
-      │                   Parallel, deduplicated, configurable
-      ▼
-Metadata Extraction ───── name, class, parent, docstring, decorators,
-      │                   parameters, return type, is_async
-      ▼
-Embedding Generation ──── SentenceTransformer (nomic-embed-code)
-      │                   Batch encoding, normalised vectors
-      ▼
-ChromaDB ──────────────── Persistent, local vector store
-      │                   HNSW cosine similarity
-      ▼
-BM25 Index ────────────── rank-bm25, camelCase tokenisation
-      │                   Serialised to disk, loaded on restart
-      ▼
-Hybrid Retrieval ──────── Vector + BM25 concurrent execution
-      │
-      ▼
-Reciprocal Rank Fusion ── Parameter-free score merging
-      │                   RRF(d) = Σ 1/(k + rank)
-      ▼
-Cross Encoder Reranker ── ms-marco-MiniLM-L-6-v2
-      │                   Joint (query, document) pair scoring
-      ▼
-Prompt Builder ─────────── Grounded context injection
-      │                   Task-specific templates
-      ▼
-Ollama LLM ─────────────── Qwen2.5-Coder:7b (local)
-      │                   Streaming support, retry/backoff
-      ▼
-Grounded Answer ─────────── answer + reasoning + cited files + functions
+
+---
+
+# 🔎 Retrieval Pipeline
+
+PrivaRepo uses multiple retrieval stages rather than relying on a single search method.
+
+### 1. Vector Search
+
+Source-code chunks are converted into embeddings and stored in a persistent ChromaDB collection.
+
+Vector search is used to retrieve code that is semantically related to the user's query.
+
+### 2. BM25 Search
+
+A BM25 index provides lexical retrieval based on terms present in the query and indexed repository code.
+
+This is useful when exact identifiers, function names, class names, or implementation terminology matter.
+
+### 3. Hybrid Retrieval
+
+Vector-search results and BM25 results are produced independently and then combined.
+
+### 4. Reciprocal Rank Fusion
+
+RRF combines ranked result lists using their ranking positions rather than directly combining incompatible score scales.
+
+### 5. Cross-Encoder Reranking
+
+The resulting candidate pool is passed to a cross encoder that scores the relationship between the query and each retrieved code document.
+
+This allows more fine-grained query/document relevance scoring before the final context is selected.
+
+---
+
+# 🌳 Syntax-Aware Code Chunking
+
+Instead of treating a source file as arbitrary blocks of text, PrivaRepo uses Tree-sitter to understand source-code structure.
+
+Depending on the language and source structure, indexed chunks can represent:
+
+```text
+function
+method
+class
+imports
+module
 ```
 
----
+Chunk metadata can include:
 
-## Features
+```text
+file path
+language
+function name
+class name
+parent class
+decorators
+docstring information
+parameters
+return type
+async status
+line range
+chunk type
+```
 
-| Feature | Details |
-|---|---|
-| **Semantic Search** | Embedding-based similarity across all code |
-| **Function Search** | Filter by chunk_type=function, language, file |
-| **Class Search** | Class hierarchies with parent class metadata |
-| **Language Filters** | Python, Java, JavaScript, TypeScript |
-| **File Filters** | Scope queries to specific files |
-| **Code Explanation** | `--task explain` prompt template |
-| **Bug Finding** | `--task find_bugs` prompt template |
-| **Similar Code** | `--task similar_code` prompt template |
-| **Interactive Chat** | Multi-turn REPL with conversation history |
-| **Evaluation** | Precision@K, Recall@K, MRR, Hit Rate, Faithfulness, Relevancy |
-| **Benchmarking** | P50/P95/P99 latency, memory usage, collection size |
-| **Export / Import** | NDJSON format for collection portability |
-| **REST API** | Optional Flask server (`privarepo serve`) |
-
----
-
-## Tech Stack
-
-| Component | Library | Version |
-|---|---|---|
-| Parsing | tree-sitter, tree-sitter-languages | 0.21.3, 1.10.2 |
-| Embeddings | sentence-transformers | 3.3.1 |
-| Vector Store | chromadb | 0.5.15 |
-| Sparse Retrieval | rank-bm25 | 0.2.2 |
-| Reranking | sentence-transformers CrossEncoder | 3.3.1 |
-| LLM | ollama | 0.4.5 |
-| CLI | typer, rich | 0.12.5, 13.9.4 |
-| Evaluation | RAGAS-style (local LLM judge) | — |
-| Testing | pytest | 8.3.4 |
-| Linting | ruff, mypy | — |
+This makes retrieval more useful for source-code questions because the system can reason over logical code units rather than only raw text windows.
 
 ---
 
-## Quickstart
+# 📚 Multi-Repository Support
 
-### 1. Prerequisites
+PrivaRepo can maintain multiple indexed repositories and switch the active repository used for querying.
+
+Each registered repository is associated with its own indexing context, including its vector collection and BM25 index.
+
+Example:
+
+```text
+PrivaRepo
+TestRepo
+Agriculture
+```
+
+This allows the same code-intelligence interface to be used across different local codebases.
+
+---
+
+# 🤖 Local LLM Inference
+
+PrivaRepo uses Ollama for local LLM inference.
+
+Models can be selected through configuration/environment variables rather than being hard-coded to a single model.
+
+Models tested during development included:
+
+```text
+qwen2.5-coder:1.5b
+llama3.2:3b
+qwen2.5-coder:7b
+```
+
+The larger models provide a quality/latency trade-off, while smaller models are more responsive on resource-constrained hardware.
+
+---
+
+# ⚡ Streaming Responses
+
+The web interface supports streaming responses from the local LLM.
+
+The high-level flow is:
+
+```text
+Ollama streaming
+       ↓
+LLM interface
+       ↓
+FastAPI SSE endpoint
+       ↓
+React frontend
+       ↓
+Incremental answer rendering
+```
+
+This allows users to see generated content progressively rather than waiting for the entire response before rendering begins.
+
+---
+
+# 🎯 Task Modes
+
+The interface supports multiple task-focused workflows.
+
+### General Q&A
+
+Ask questions about the indexed repository.
+
+Example:
+
+```text
+What does RAGPipeline.query() do?
+```
+
+### Explain Code
+
+Request a step-by-step explanation of a function, class, or implementation.
+
+Example:
+
+```text
+Explain the retry logic step by step.
+```
+
+### Find Bugs
+
+Identify potential bugs based only on retrieved repository evidence.
+
+Example:
+
+```text
+Find potential bugs in this function.
+```
+
+### Similar Code
+
+Find code structurally or functionally similar to the queried implementation.
+
+### Search Functions
+
+Search the indexed repository for relevant functions or methods.
+
+### Search Classes
+
+Search for classes related to a concept.
+
+---
+
+# 📊 Current Evaluation
+
+The current PrivaRepo retrieval evaluation was performed on an indexed corpus containing:
+
+* **486 code chunks**
+* **42 unique files**
+
+### Retrieval Metrics
+
+| Metric | Score |
+| :--- | ---: |
+| Precision@5 | **70.7%** |
+| Recall@5 | **100%** |
+| MRR | **92.2%** |
+| Hit Rate@5 | **100%** |
+
+These results indicate that the current retrieval pipeline is effective at finding relevant code in the evaluated repository.
+
+### Generation Metrics
+
+The current generation evaluation produced:
+
+| Metric | Score |
+| :--- | ---: |
+| Faithfulness | 65.3% |
+| Answer Relevancy | 65.3% |
+| Context Precision | 54.7% |
+| Context Recall | 40.0% |
+
+Generation quality is currently a weaker part of the system than retrieval quality. The project therefore treats retrieval effectiveness and local generation as separate evaluation dimensions.
+
+---
+
+# 🖥️ Screenshots
+
+## Repository Indexing
+
+![Repository Indexing](images/indexing.png)
+
+## PrivaRepo Interface
+
+![PrivaRepo UI](images/ui.png)
+
+## Code Intelligence
+
+![Query Answer](images/query-answer.png)
+
+## Retrieved Context
+
+![Retrieved Context](images/retrieved-context.png)
+
+---
+
+# 🧰 Tech Stack
+
+| Component | Technology |
+| :--- | :--- |
+| Programming Language | Python |
+| Backend | FastAPI |
+| Frontend | React |
+| Code Parsing | Tree-sitter |
+| Vector Database | ChromaDB |
+| Embeddings | Sentence Transformers |
+| Sparse Retrieval | BM25 |
+| Result Fusion | Reciprocal Rank Fusion |
+| Reranking | Sentence Transformers Cross-Encoder |
+| Local LLM | Ollama |
+| CLI | Typer + Rich |
+| Evaluation | Local LLM-based evaluation |
+| Testing | pytest |
+
+---
+
+# 🚀 Quick Start
+
+## 1. Clone
 
 ```bash
-# Python 3.11+
-python --version
-
-# Install Ollama
-# https://ollama.ai
-
-# Pull the code model
-ollama pull qwen2.5-coder:7b
+git clone <REPOSITORY_URL>
+cd LocalRAG
 ```
 
-### 2. Installation
+## 2. Create Virtual Environment
 
 ```bash
-git clone <repo>
-cd privarepo
 python -m venv .venv
-source .venv/bin/activate   # Windows: .venv\Scripts\activate
+source .venv/bin/activate
+```
+
+Windows:
+
+```powershell
+.venv\Scripts\activate
+```
+
+## 3. Install Dependencies
+
+```bash
 pip install -r requirements.txt
 ```
 
-### 3. Index a Repository
+## 4. Install Ollama
+
+Install Ollama locally and pull a compatible code model.
+
+Example:
 
 ```bash
-# Index your codebase
-python cli.py index /path/to/your/project
-
-# Index with language filter
-python cli.py index /path/to/project --language python
-
-# Reset and re-index
-python cli.py index /path/to/project --reset
+ollama pull qwen2.5-coder:7b
 ```
 
-### 4. Query
+The active model can be selected through the project's configuration.
+
+---
+
+# 📦 Index a Repository
+
+Using the CLI:
 
 ```bash
-# Ask a general question
-python cli.py query "How does the authentication system work?"
-
-# Explain a concept
-python cli.py query "Explain the retry logic" --task explain
-
-# Find bugs
-python cli.py query "Find potential issues in the connection pool" --task find_bugs
-
-# Filter by language and file
-python cli.py query "database connections" --language java --file DatabaseService.java
+python -m cli index /path/to/your/project
 ```
 
-### 5. Raw Search (No LLM)
+A repository can then be queried through the CLI or web application.
+
+---
+
+# 💬 Query the Repository
+
+Example:
 
 ```bash
-# Hybrid search
-python cli.py search "async function error handling"
-
-# With code snippets displayed
-python cli.py search "class authentication" --code
-
-# With filters
-python cli.py search "validate" --language python --type function
+python -m cli query "How does the authentication system work?"
 ```
 
-### 6. Interactive Mode
+Explain code:
 
 ```bash
-python cli.py interactive
-
-# Inside the session:
-# /search <query>    — raw search
-# /stats             — collection stats
-# /reset-history     — clear conversation history
-# exit               — quit
+python -m cli query \
+  "Explain the retry logic" \
+  --task explain
 ```
 
-### 7. Statistics
+Find bugs:
 
 ```bash
-python cli.py stats
-```
-
-### 8. Evaluation
-
-```bash
-# Run full evaluation suite
-python cli.py evaluate
-
-# Custom queries file
-python cli.py evaluate --queries data/eval_queries.json
-
-# Save to specific path
-python cli.py evaluate --output eval_results/report.json
-```
-
-### 9. Benchmark
-
-```bash
-# 20 iterations (default)
-python cli.py benchmark
-
-# Custom run count
-python cli.py benchmark --runs 50 --output results/bench.json
-```
-
-### 10. Export / Import
-
-```bash
-# Export collection
-python cli.py export collection_backup.ndjson
-
-# Import (with reset)
-python cli.py import collection_backup.ndjson --reset
-```
-
-### 11. REST API
-
-```bash
-python cli.py serve --host 0.0.0.0 --port 8080
-
-# Endpoints:
-# GET  /health
-# GET  /stats
-# POST /query  {"question": "...", "task_type": "general", "language": "python"}
-# POST /search {"query": "...", "language": "python", "chunk_type": "function"}
+python -m cli query \
+  "Find potential issues in the connection pool" \
+  --task find_bugs
 ```
 
 ---
 
-## Configuration
+# 🔍 Raw Hybrid Search
 
-All configuration is done via environment variables or a `.env` file:
-
-```env
-# Embedding
-EMBEDDING_MODEL=nomic-ai/nomic-embed-code
-EMBEDDING_BATCH_SIZE=64
-
-# ChromaDB
-CHROMA_PERSIST_DIR=.chromadb
-CHROMA_COLLECTION=privarepo_code
-
-# Retrieval
-TOP_K_VECTOR=30
-TOP_K_BM25=30
-RRF_K=60
-RERANK_CANDIDATES=20
-FINAL_TOP_K=5
-USE_RERANKER=true
-CROSS_ENCODER_MODEL=cross-encoder/ms-marco-MiniLM-L-6-v2
-RERANKER_DEVICE=cpu
-
-# LLM
-OLLAMA_BASE_URL=http://localhost:11434
-OLLAMA_MODEL=qwen2.5-coder:7b
-LLM_TEMPERATURE=0.1
-LLM_MAX_TOKENS=2048
-
-# Evaluation
-EVAL_K=5
-BENCHMARK_ITERS=20
-FAITHFULNESS_METHOD=llm
-```
-
----
-
-## Project Structure
-
-```
-privarepo/
-├── config.py                  # Centralised typed configuration
-├── tree_sitter_chunker.py     # AST-aware code parsing & chunking
-├── vector_store.py            # ChromaDB + SentenceTransformer embedding
-├── llm_interface.py           # Ollama client with retry/streaming
-├── rag_pipeline.py            # BM25 + Vector + RRF + CrossEncoder + LLM
-├── evaluator.py               # RAGAS-style evaluation suite
-├── cli.py                     # Typer + Rich CLI (10 commands)
-├── example_usage.py           # End-to-end demo script
-├── requirements.txt           # Pinned production dependencies
-├── pyproject.toml             # pytest, ruff, mypy configuration
-├── data/
-│   └── eval_queries.json      # 15 evaluation queries with ground truth
-├── tests/
-│   ├── test_chunker.py        # Tree-sitter unit tests (all 4 languages)
-│   ├── test_retrieval.py      # BM25 + RRF + HybridRetriever tests
-│   └── test_pipeline.py       # End-to-end integration tests
-└── README.md
-```
-
----
-
-## Testing
+Search the repository without LLM generation:
 
 ```bash
-# Run all tests
+python -m cli search "async function error handling"
+```
+
+With code snippets:
+
+```bash
+python -m cli search "class authentication" --code
+```
+
+---
+
+# 📈 Evaluation
+
+Run the complete evaluation suite:
+
+```bash
+python -m cli evaluate
+```
+
+Save the report:
+
+```bash
+python -m cli evaluate \
+  --output eval_results/report.json
+```
+
+The evaluation framework includes retrieval metrics and local generation-quality metrics.
+
+---
+
+# ⏱️ Benchmarking
+
+Run the latency benchmark:
+
+```bash
+python -m cli benchmark
+```
+
+The number of benchmark iterations can be configured through the CLI.
+
+---
+
+# 📤 Export / Import
+
+Export the indexed collection:
+
+```bash
+python -m cli export collection_backup.ndjson
+```
+
+Import a previously exported collection:
+
+```bash
+python -m cli import collection_backup.ndjson --reset
+```
+
+---
+
+# 🌐 Web Application
+
+Start the backend:
+
+```bash
+uvicorn app.main:app --reload --port 8000
+```
+
+Start the frontend:
+
+```bash
+cd frontend
+npm run dev
+```
+
+The backend exposes the API used by the web interface.
+
+---
+
+# 🧪 Testing
+
+Run the test suite:
+
+```bash
 pytest tests/ -v
+```
 
-# Run with coverage
-pytest tests/ --cov=. --cov-report=html
+Example individual test modules:
 
-# Run specific module
+```bash
 pytest tests/test_chunker.py -v
 pytest tests/test_retrieval.py -v
 pytest tests/test_pipeline.py -v
@@ -298,45 +535,117 @@ pytest tests/test_pipeline.py -v
 
 ---
 
-## Target Performance
+# 🗂️ Project Structure
 
-| Metric | Target | Notes |
-|---|---|---|
-| Precision@5 | ≥ 70% | With 10K+ function corpus |
-| Recall@5 | ≥ 95% | Hybrid retrieval advantage |
-| MRR | ≥ 0.80 | Cross encoder reranking |
-| Faithfulness | ≥ 0.90 | LLM-as-judge |
-| Answer Relevancy | ≥ 0.90 | LLM-as-judge |
-| Retrieval Latency | < 800ms | P95 |
-| Generation Latency | ~2s | Qwen2.5-Coder:7b |
-| Total Latency | ~2.5s | End-to-end |
-
----
-
-## Design Decisions
-
-### Why AST-Boundary Chunking (not sliding window)?
-
-Sliding-window chunking breaks function bodies at arbitrary line counts, producing chunks that start mid-loop or mid-conditional. Tree-sitter extracts semantically complete units — the LLM always gets a complete, runnable code unit with its full context (decorators, docstring, class signature).
-
-### Why RRF (not linear score combination)?
-
-Linear combination requires normalising scores from two completely different scoring distributions (cosine similarity vs. BM25 TF-IDF). RRF operates on ranks, which are scale-invariant. It's parameter-free (proven effective at k=60) and handles the case where one retriever completely misses the relevant document.
-
-### Why Cross Encoder (not just bi-encoder)?
-
-Bi-encoder similarity scores are computed independently for query and document. Cross encoders process the (query, document) pair jointly — they can model fine-grained lexical and semantic interactions. The trade-off is O(n) inference at query time, but with only 20 candidates (post-RRF) this is ~50ms on CPU.
-
-### Why Ollama (not API-based LLMs)?
-
-PrivaRepo is designed for **privacy-sensitive codebases**. Source code may contain proprietary algorithms, credentials, or trade secrets. Ollama provides a locally-served LLM with no data leaving the machine. Qwen2.5-Coder is specifically trained on code and outperforms general models on code Q&A.
-
-### Why `nomic-ai/nomic-embed-code` for embeddings?
-
-nomic-embed-code is code-specialized and consistently outperforms all-MiniLM-L6-v2 on code retrieval benchmarks (8192 token context vs. 512). If you have tight memory constraints, fall back to `sentence-transformers/all-MiniLM-L6-v2` via `EMBEDDING_MODEL` env var.
+```text
+LocalRAG/
+│
+├── app/
+│   ├── routers/
+│   │   ├── chat.py
+│   │   ├── indexing.py
+│   │   ├── repositories.py
+│   │   ├── search.py
+│   │   └── settings.py
+│   └── ...
+│
+├── frontend/
+│
+├── config.py
+├── rag_pipeline.py
+├── tree_sitter_chunker.py
+├── vector_store.py
+├── llm_interface.py
+├── evaluator.py
+├── cli.py
+├── example_usage.py
+├── requirements.txt
+├── tests/
+├── images/
+└── README.md
+```
 
 ---
 
-## License
+# 🧠 Design Decisions
 
-MIT License. See LICENSE for details.
+## Why Tree-sitter?
+
+Tree-sitter allows the indexer to identify logical source-code structures such as functions, methods, and classes rather than relying exclusively on arbitrary text windows.
+
+This gives the retrieval pipeline access to useful structural metadata when searching code.
+
+## Why Hybrid Retrieval?
+
+Semantic vector search and lexical BM25 retrieval capture different kinds of relevance.
+
+Vector search can retrieve conceptually related code, while BM25 can be useful when exact repository terminology, identifiers, or function names matter.
+
+Combining both provides broader retrieval coverage than relying on either method alone.
+
+## Why RRF?
+
+Vector similarity and BM25 scores are produced on different scales.
+
+RRF operates on ranking positions, making it possible to combine the ranked outputs without directly assuming that the two scoring distributions are numerically comparable.
+
+## Why Cross-Encoder Reranking?
+
+The cross encoder evaluates the query and retrieved document together rather than independently embedding them.
+
+This provides a second relevance-ranking stage after hybrid retrieval.
+
+## Why Ollama?
+
+The project is designed around local code intelligence.
+
+Using Ollama allows the LLM inference stage to run locally, which is useful when working with private source repositories where sending code to a remote inference API is undesirable.
+
+---
+
+# 🔐 Privacy-Oriented Design
+
+PrivaRepo is designed to support local code analysis.
+
+The intended runtime flow is:
+
+```text
+Local Repository
+      ↓
+Local Index
+      ↓
+Local Retrieval
+      ↓
+Local Ollama Model
+      ↓
+Local Answer
+```
+
+No cloud-hosted LLM API is required for the core RAG workflow.
+
+---
+
+# ⚠️ Current Limitations
+
+PrivaRepo is a BTech project and is still being refined.
+
+Current evaluation shows that **retrieval quality is stronger than generation quality**.
+
+Some implementation-oriented questions can still retrieve related wrapper, documentation, or test chunks instead of the most specific implementation body.
+
+The system is therefore intended as a repository-grounded code intelligence assistant rather than a guarantee of perfect code understanding.
+
+---
+
+# 📌 Future Improvements
+
+Possible future improvements include:
+
+- Better implementation-aware retrieval
+- Improved query intent classification
+- More precise context selection
+- Stronger local code-focused generation models
+- Lower generation latency
+- Larger and more diverse evaluation datasets
+- Improved multi-turn repository-aware conversations
+- Additional programming language support
