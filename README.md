@@ -317,23 +317,21 @@ Generation quality is currently a weaker part of the system than retrieval quali
 
 # 🖥️ Screenshots
 
-## Repository Indexing
+## User Interface
 
-![Repository Indexing](images/indexing.png)
+![User Interface](images/user_interface.png)
 
-## PrivaRepo Interface
+## Chat
 
-![PrivaRepo UI](images/ui.png)
+![Chat](images/chat_image.png)
 
-## Code Intelligence
+## Answer Generated
 
-![Query Answer](images/query-answer.png)
+![Answer Generated](images/answer_generating.png)
 
-## Retrieved Context
+## Repository
 
-![Retrieved Context](images/retrieved-context.png)
-
----
+![Repository](images/repository_image.png)
 
 # 🧰 Tech Stack
 
