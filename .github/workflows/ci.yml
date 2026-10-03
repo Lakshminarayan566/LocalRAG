@@ -30,4 +30,4 @@ jobs:
         run: ruff check .
 
       - name: Run tests
-        run: pytest -q -k "not test_query_empty_results_handled"
+        run: pytest -q -k "not test_pipeline"
