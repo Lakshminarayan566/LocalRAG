@@ -20,14 +20,15 @@ from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException
 
-from ..core.pipeline_manager import PipelineManager
-from ..dependencies import get_pipeline_manager
 from rag_pipeline import RAGPipeline
 from repository_manager import (
     DuplicateRepositoryError,
     InvalidRepositoryPathError,
     RepositoryNotFoundError,
 )
+
+from ..core.pipeline_manager import PipelineManager
+from ..dependencies import get_pipeline_manager
 from ..schemas.repository import RepositoryAddRequest, RepositoryListResponse, RepositoryResponse
 
 logger = logging.getLogger(__name__)

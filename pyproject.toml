@@ -10,8 +10,21 @@ asyncio_mode = "auto"
 line-length = 100
 target-version = "py311"
 select = ["E", "F", "W", "I", "N", "UP", "B"]
-ignore = ["E501", "B008", "N803"]
-
+ignore = [
+    "E501",
+    "B008",
+    "N803",
+    "UP006",
+    "UP007",
+    "UP035",
+    "UP037",
+    "E402",
+    "N806",
+    "B904",
+    "F841",
+    "B007",
+    "UP038",
+]
 [tool.mypy]
 python_version = "3.11"
 ignore_missing_imports = true

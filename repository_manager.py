@@ -16,7 +16,6 @@ import json
 from pathlib import Path
 from typing import Optional
 
-
 _PROJECT_ROOT = Path(__file__).parent.resolve()
 _DEFAULT_REGISTRY_PATH = _PROJECT_ROOT / "repositories.json"
 _DEFAULT_BM25_BASE_DIR = _PROJECT_ROOT / ".bm25"

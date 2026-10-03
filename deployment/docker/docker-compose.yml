@@ -1,0 +1,36 @@
+services:
+  backend:
+    build:
+      context: ../..
+      dockerfile: deployment/docker/backend.Dockerfile
+
+    environment:
+      OLLAMA_BASE_URL: http://host.docker.internal:11434
+
+    ports:
+      - "8000:8000"
+
+    volumes:
+      - ../../.chromadb:/app/.chromadb
+      - ../../.bm25:/Users/maridibalashankar/Projects/privarepo/.bm25
+      - ../../repositories.json:/app/repositories.json
+
+      # Allow Docker to read repositories under Projects
+      - /Users/maridibalashankar/Projects:/Users/maridibalashankar/Projects:ro
+
+      # Agriculture repo is outside Projects
+      - /Users/maridibalashankar/agriculture_project:/Users/maridibalashankar/agriculture_project:ro
+
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  frontend:
+    build:
+      context: ../..
+      dockerfile: deployment/docker/frontend.Dockerfile
+
+    ports:
+      - "3000:3000"
+
+    depends_on:
+      - backend

@@ -12,6 +12,7 @@ from __future__ import annotations
 import logging
 
 from fastapi import APIRouter, Depends
+
 from ..core.pipeline_manager import PipelineManager
 from ..dependencies import get_pipeline_manager
 from ..schemas.common import HealthResponse

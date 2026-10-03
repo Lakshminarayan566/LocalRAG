@@ -40,12 +40,15 @@ if str(_PROJECT_ROOT) not in sys.path:
 
 import logging  # noqa: E402  (must follow the sys.path fix above)
 
-from fastapi import FastAPI, Request  # noqa: E402
+from fastapi import (  # noqa: E402
+    FastAPI,
+    HTTPException,  # noqa: E402
+    Request,
+)
+from fastapi.exceptions import RequestValidationError  # noqa: E402
 from fastapi.middleware.cors import CORSMiddleware  # noqa: E402
 from fastapi.responses import JSONResponse  # noqa: E402
 
-from fastapi import HTTPException  # noqa: E402
-from fastapi.exceptions import RequestValidationError  # noqa: E402
 from .core.logging_config import setup_logging
 from .routers import chat, health, indexing, repositories, search, settings
 from .schemas.common import ErrorResponse

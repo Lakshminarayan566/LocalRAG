@@ -8,9 +8,6 @@ Uses in-memory source strings (no filesystem required for most tests).
 from __future__ import annotations
 
 import textwrap
-from pathlib import Path
-from typing import List
-from unittest.mock import MagicMock, patch
 
 import pytest
 
@@ -24,7 +21,6 @@ from tree_sitter_chunker import (
     _build_chunk_id,
     _build_document,
 )
-
 
 # ---------------------------------------------------------------------------
 # Fixtures

@@ -13,9 +13,10 @@ import logging
 
 from fastapi import APIRouter, Depends, HTTPException
 
+from repository_manager import RepositoryNotFoundError
+
 from ..core.pipeline_manager import PipelineManager
 from ..dependencies import get_pipeline_manager
-from repository_manager import RepositoryNotFoundError
 from ..schemas.search import RetrievedChunkOut, SearchRequest, SearchResponse
 
 logger = logging.getLogger(__name__)

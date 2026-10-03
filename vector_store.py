@@ -17,7 +17,6 @@ from __future__ import annotations
 
 import json
 import logging
-import os
 import time
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
@@ -306,7 +305,7 @@ class VectorStore:
                 include=["documents", "metadatas"],
             )
             for cid, doc, meta in zip(
-                result["ids"], result["documents"], result["metadatas"]
+                result["ids"], result["documents"], result["metadatas"], strict=False
             ):
                 all_items.append((cid, doc, meta))
             offset += len(result["ids"])

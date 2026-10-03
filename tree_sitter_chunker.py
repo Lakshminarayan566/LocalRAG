@@ -16,14 +16,13 @@ from __future__ import annotations
 
 import hashlib
 import logging
-import re
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Dict, Iterator, List, Optional, Set, Tuple
 
-from tree_sitter import Language, Node, Parser
-from tree_sitter_languages import get_language, get_parser
+from tree_sitter import Node, Parser
+from tree_sitter_languages import get_parser
 
 from config import ChunkerConfig
 

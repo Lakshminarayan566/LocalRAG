@@ -22,7 +22,6 @@ import time
 from dataclasses import dataclass, field
 from typing import Dict, Iterator, List, Optional
 
-import ollama
 from ollama import Client, ResponseError
 
 from config import LLMConfig

@@ -10,14 +10,17 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
 
-from ..core.pipeline_manager import PipelineManager
-from ..dependencies import get_pipeline_manager
+from llm_interface import LLMResponseParser
+
 # PromptBuilder / LLMResponseParser are reused exactly as the existing
 # blocking path uses them (via OllamaClient.generate() internally) — no
 # new prompt content, no new parsing logic. Adjust this import path if
 # rag_pipeline.py doesn't sit directly under app/ in your project.
 from rag_pipeline import PromptBuilder
-from llm_interface import LLMResponseParser
+
+from ..core.pipeline_manager import PipelineManager
+from ..dependencies import get_pipeline_manager
+
 
 def _run_sync_generator(sync_gen, loop: asyncio.AbstractEventLoop, q: "asyncio.Queue", sentinel: object) -> None:
     """Runs on a background thread. Pushes each item from a blocking sync

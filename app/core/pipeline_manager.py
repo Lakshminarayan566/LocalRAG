@@ -42,8 +42,6 @@ from typing import Optional
 from config import AppConfig
 from rag_pipeline import RAGPipeline
 from repository_manager import (
-    DuplicateRepositoryError,
-    InvalidRepositoryPathError,
     RepositoryManager,
     RepositoryNotFoundError,
 )

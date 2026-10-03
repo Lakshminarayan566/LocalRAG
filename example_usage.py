@@ -16,10 +16,7 @@ Run this after installing dependencies and starting Ollama:
 
 from __future__ import annotations
 
-import json
 import logging
-import os
-import sys
 import time
 from pathlib import Path
 
@@ -61,7 +58,7 @@ def demo_index(pipeline) -> None:
         show_progress=True,
     )
 
-    print(f"\n📦 Indexing Results:")
+    print("\n📦 Indexing Results:")
     for key, val in result.items():
         print(f"   {key}: {val}")
 
@@ -123,7 +120,7 @@ def demo_query(pipeline, llm_available: bool) -> None:
         response = pipeline.query(question=question, task_type=task_type)
         elapsed = time.monotonic() - t0
 
-        print(f"\n💬 Answer (truncated to 300 chars):")
+        print("\n💬 Answer (truncated to 300 chars):")
         print(f"   {response.answer[:300]}...")
         print(f"\n   📁 Referenced files: {response.referenced_files[:3]}")
         print(f"   🔧 Functions used: {response.functions_used[:3]}")
@@ -139,7 +136,7 @@ def demo_stats(pipeline) -> None:
     separator("4. STATISTICS — Collection summary")
 
     stats = pipeline.get_stats()
-    print(f"\n📊 Collection Statistics:")
+    print("\n📊 Collection Statistics:")
     print(f"   Total chunks:     {stats.get('total_chunks', 0)}")
     print(f"   Unique files:     {stats.get('unique_files', 0)}")
     print(f"   Embedding model:  {stats.get('embedding_model', '—')}")

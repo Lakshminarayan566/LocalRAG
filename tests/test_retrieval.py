@@ -7,22 +7,17 @@ Uses in-memory or temporary ChromaDB instances where possible.
 
 from __future__ import annotations
 
-import textwrap
-from pathlib import Path
-from typing import List
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock
 
 import pytest
 
 from config import RetrievalConfig
 from rag_pipeline import (
     BM25Index,
-    CrossEncoderReranker,
     HybridRetriever,
     RetrievedChunk,
     reciprocal_rank_fusion,
 )
-
 
 # ---------------------------------------------------------------------------
 # Helpers

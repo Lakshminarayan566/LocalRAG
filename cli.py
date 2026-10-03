@@ -22,22 +22,18 @@ from __future__ import annotations
 
 import json
 import logging
-import sys
 from pathlib import Path
 from typing import Optional
 
 import typer
 from rich import box
-from rich.columns import Columns
 from rich.console import Console
-from rich.live import Live
 from rich.markdown import Markdown
 from rich.panel import Panel
 from rich.progress import Progress, SpinnerColumn, TextColumn, TimeElapsedColumn
 from rich.prompt import Confirm, Prompt
 from rich.syntax import Syntax
 from rich.table import Table
-from rich.text import Text
 
 from config import AppConfig
 from repository_manager import RepositoryManager
@@ -695,7 +691,7 @@ def cmd_interactive(
 
     while True:
         try:
-            question = Prompt.ask(f"[bold cyan]You[/bold cyan]").strip()
+            question = Prompt.ask("[bold cyan]You[/bold cyan]").strip()
         except (KeyboardInterrupt, EOFError):
             console.print("\n[dim]Goodbye![/dim]")
             break

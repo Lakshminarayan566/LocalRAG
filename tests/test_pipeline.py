@@ -10,15 +10,13 @@ from __future__ import annotations
 import json
 import textwrap
 from pathlib import Path
-from typing import List
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 import pytest
 
-from config import AppConfig, ChunkerConfig, LLMConfig, RetrievalConfig, VectorStoreConfig
+from config import AppConfig
 from llm_interface import LLMResponse
 from rag_pipeline import RAGPipeline, RAGResponse
-
 
 # ---------------------------------------------------------------------------
 # Fixtures
@@ -352,7 +350,7 @@ class TestExportImport:
         export_path = str(tmp_path / "export.ndjson")
         pipeline_with_data.export(export_path)
 
-        with open(export_path, "r") as f:
+        with open(export_path) as f:
             for line in f:
                 record = json.loads(line.strip())
                 assert "chunk_id" in record

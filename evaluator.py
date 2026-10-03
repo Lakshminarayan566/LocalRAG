@@ -34,13 +34,13 @@ import re
 import statistics
 import time
 from dataclasses import asdict, dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional
 
 import psutil
 
-from config import AppConfig, EvalConfig
+from config import EvalConfig
 from llm_interface import OllamaClient
 from rag_pipeline import RAGPipeline, RetrievedChunk
 
@@ -911,7 +911,7 @@ class Evaluator:
         }
 
         report = FullBenchmarkReport(
-            timestamp=datetime.now(timezone.utc).isoformat(),
+            timestamp=datetime.now(UTC).isoformat(),
             system_info=system_info,
             collection_stats=self.pipeline.get_stats(),
         )

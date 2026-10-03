@@ -7,8 +7,9 @@ singletons. No business logic lives here.
 
 from __future__ import annotations
 
-from .core.pipeline_manager import pipeline_manager, PipelineManager
 from repository_manager import RepositoryManager
+
+from .core.pipeline_manager import PipelineManager, pipeline_manager
 
 
 def get_pipeline_manager() -> PipelineManager:

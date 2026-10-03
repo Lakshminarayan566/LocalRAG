@@ -26,12 +26,10 @@ Design decisions:
 from __future__ import annotations
 
 import logging
-import math
-import os
 import pickle
 import re
 import time
-from concurrent.futures import ThreadPoolExecutor, as_completed
+from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
@@ -41,7 +39,7 @@ from rank_bm25 import BM25Okapi
 from sentence_transformers import CrossEncoder
 
 from config import AppConfig, RetrievalConfig
-from llm_interface import LLMResponse, OllamaClient
+from llm_interface import OllamaClient
 from vector_store import VectorStore
 
 logger = logging.getLogger(__name__)
@@ -332,7 +330,7 @@ def reciprocal_rank_fusion(
     rrf_scores: Dict[str, float] = {}
     chunk_data: Dict[str, Dict] = {}
 
-    for weight, result_list in zip(weights, ranked_lists):
+    for weight, result_list in zip(weights, ranked_lists, strict=False):
         for item in result_list:
             cid = item["chunk_id"]
             rank = item.get("rank", len(result_list))
@@ -406,7 +404,7 @@ class CrossEncoderReranker:
         )
 
         scored = []
-        for candidate, score in zip(candidates, scores):
+        for candidate, score in zip(candidates, scores, strict=False):
             if float(score) >= score_threshold:
                 item = dict(candidate)
                 item["rerank_score"] = float(score)
