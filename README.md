@@ -32,21 +32,23 @@ The design is focused on keeping repository code local rather than sending sourc
   - Search Classes
 - **CLI and REST API** support.
 - **Evaluation and benchmarking** for retrieval and generation performance.
+- **Docker deployment** for backend and frontend services.
+- **GitHub Actions CI** for automated linting and testing.
 
 ---
 
 # 🏗️ Architecture
 
 ```text
-                        LOCAL REPOSITORY
+                         LOCAL REPOSITORY
                                │
                                ▼
-                     ┌───────────────────┐
-                     │    Tree-sitter    │
-                     │   Source Parsing  │
-                     └─────────┬─────────┘
-                               │
-                               ▼
+                      ┌───────────────────┐
+                      │    Tree-sitter    │
+                      │   Source Parsing  │
+                      └─────────┬─────────┘
+                                │
+                                ▼
                    ┌────────────────────────┐
                    │ Syntax-aware Chunking  │
                    │                        │
@@ -56,55 +58,55 @@ The design is focused on keeping repository code local rather than sending sourc
                    └───────────┬────────────┘
                                │
                                ▼
-                     ┌──────────────────┐
-                     │ Metadata + Code  │
-                     │ Context          │
-                     └────────┬─────────┘
-                              │
-                 ┌────────────┴────────────┐
-                 ▼                         ▼
-        ┌─────────────────┐       ┌─────────────────┐
-        │ Vector Embedding│       │   BM25 Index    │
-        │ Sentence        │       │ Lexical Search  │
-        │ Transformers    │       │                 │
-        └────────┬────────┘       └────────┬────────┘
-                 │                         │
-                 ▼                         ▼
-        ┌─────────────────┐       ┌─────────────────┐
-        │    ChromaDB     │       │   BM25 Search   │
-        │ Vector Search   │       │     Results     │
-        └────────┬────────┘       └────────┬────────┘
-                 │                         │
-                 └────────────┬────────────┘
-                              ▼
-                 ┌──────────────────────────┐
-                 │ Reciprocal Rank Fusion   │
-                 │          (RRF)           │
-                 └────────────┬─────────────┘
-                              ▼
-                 ┌──────────────────────────┐
-                 │  Cross-Encoder Reranker  │
-                 └────────────┬─────────────┘
-                              ▼
-                 ┌──────────────────────────┐
-                 │  Retrieved Code Context  │
-                 └────────────┬─────────────┘
-                              ▼
-                 ┌──────────────────────────┐
-                 │      Prompt Builder      │
-                 │ Grounded task-specific   │
-                 │ instructions + context   │
-                 └────────────┬─────────────┘
-                              ▼
-                 ┌──────────────────────────┐
-                 │     Local Ollama LLM     │
-                 └────────────┬─────────────┘
-                              ▼
-                 ┌──────────────────────────┐
-                 │ Grounded Code Response   │
-                 │ answer + evidence +      │
-                 │ referenced files         │
-                 └──────────────────────────┘
+                      ┌──────────────────┐
+                      │ Metadata + Code  │
+                      │ Context          │
+                      └────────┬─────────┘
+                               │
+                   ┌───────────┴───────────┐
+                   ▼                       ▼
+          ┌─────────────────┐     ┌─────────────────┐
+          │ Vector Embedding│     │   BM25 Index    │
+          │ Sentence        │     │ Lexical Search  │
+          │ Transformers    │     │                 │
+          └────────┬────────┘     └────────┬────────┘
+                   │                       │
+                   ▼                       ▼
+          ┌─────────────────┐     ┌─────────────────┐
+          │    ChromaDB     │     │   BM25 Search   │
+          │ Vector Search   │     │     Results     │
+          └────────┬────────┘     └────────┬────────┘
+                   │                       │
+                   └───────────┬───────────┘
+                               ▼
+                   ┌──────────────────────────┐
+                   │ Reciprocal Rank Fusion   │
+                   │          (RRF)           │
+                   └────────────┬─────────────┘
+                                ▼
+                   ┌──────────────────────────┐
+                   │  Cross-Encoder Reranker  │
+                   └────────────┬─────────────┘
+                                ▼
+                   ┌──────────────────────────┐
+                   │  Retrieved Code Context  │
+                   └────────────┬─────────────┘
+                                ▼
+                   ┌──────────────────────────┐
+                   │      Prompt Builder      │
+                   │ Grounded task-specific   │
+                   │ instructions + context   │
+                   └────────────┬─────────────┘
+                                ▼
+                   ┌──────────────────────────┐
+                   │     Local Ollama LLM     │
+                   └────────────┬─────────────┘
+                                ▼
+                   ┌──────────────────────────┐
+                   │ Grounded Code Response   │
+                   │ answer + evidence +      │
+                   │ referenced files         │
+                   └──────────────────────────┘
 ```
 
 ---
@@ -286,10 +288,10 @@ Search for classes related to a concept.
 
 The current PrivaRepo retrieval evaluation was performed on an indexed corpus containing:
 
-* **486 code chunks**
-* **42 unique files**
+- **486 code chunks**
+- **42 unique files**
 
-### Retrieval Metrics
+## Retrieval Metrics
 
 | Metric | Score |
 | :--- | ---: |
@@ -300,38 +302,104 @@ The current PrivaRepo retrieval evaluation was performed on an indexed corpus co
 
 These results indicate that the current retrieval pipeline is effective at finding relevant code in the evaluated repository.
 
-### Generation Metrics
+## Generation Metrics
 
 The current generation evaluation produced:
 
 | Metric | Score |
 | :--- | ---: |
-| Faithfulness | 65.3% |
-| Answer Relevancy | 65.3% |
-| Context Precision | 54.7% |
-| Context Recall | 40.0% |
+| Faithfulness | **65.3%** |
+| Answer Relevancy | **65.3%** |
+| Context Precision | **54.7%** |
+| Context Recall | **40.0%** |
 
 Generation quality is currently a weaker part of the system than retrieval quality. The project therefore treats retrieval effectiveness and local generation as separate evaluation dimensions.
 
 ---
 
-# 🖥️ Screenshots
+# 🐳 Docker Deployment
 
-## User Interface
+PrivaRepo includes a Docker-based deployment for the backend and frontend.
 
-![User Interface](images/user_interface.png)
+The Docker deployment provides:
 
-## Chat
+- FastAPI backend container
+- React frontend container
+- Nginx for serving the frontend
+- Nginx reverse proxy for `/api` requests
+- Connection to Ollama running locally on the host
+- Persistent ChromaDB storage
+- Persistent BM25 indexes
+- Multi-repository access to local repository paths
 
-![Chat](images/chat_image.png)
+## Docker Structure
 
-## Answer Generated
+```text
+deployment/
+└── docker/
+    ├── backend.Dockerfile
+    ├── backend.Dockerfile.dockerignore
+    ├── docker-compose.yml
+    ├── frontend.Dockerfile
+    ├── frontend.Dockerfile.dockerignore
+    ├── nginx.conf
+    └── requirements.txt
+```
 
-![Answer Generated](images/answer_generating.png)
+## Docker Prerequisites
 
-## Repository
+Install:
 
-![Repository](images/repository_image.png)
+- Docker Desktop
+- Ollama
+
+Start Ollama and pull a compatible local model.
+
+Example:
+
+```bash
+ollama pull qwen2.5-coder:7b
+```
+
+## Start the Application with Docker
+
+From the repository root:
+
+```bash
+docker compose -f deployment/docker/docker-compose.yml up --build
+```
+
+The frontend is exposed on:
+
+```text
+http://localhost:3000
+```
+
+The backend is exposed on:
+
+```text
+http://localhost:8000
+```
+
+To run in detached mode:
+
+```bash
+docker compose -f deployment/docker/docker-compose.yml up --build -d
+```
+
+To stop the services:
+
+```bash
+docker compose -f deployment/docker/docker-compose.yml down
+```
+
+## Docker + Ollama
+
+The Docker backend is configured to communicate with Ollama running on the host machine.
+
+This allows the application containers to use local LLM inference while keeping repository analysis local.
+
+---
 
 # 🧰 Tech Stack
 
@@ -350,6 +418,9 @@ Generation quality is currently a weaker part of the system than retrieval quali
 | CLI | Typer + Rich |
 | Evaluation | Local LLM-based evaluation |
 | Testing | pytest |
+| Containerization | Docker |
+| Web Server / Proxy | Nginx |
+| CI | GitHub Actions |
 
 ---
 
@@ -369,7 +440,7 @@ python -m venv .venv
 source .venv/bin/activate
 ```
 
-Windows:
+### Windows
 
 ```powershell
 .venv\Scripts\activate
@@ -498,6 +569,8 @@ python -m cli import collection_backup.ndjson --reset
 
 # 🌐 Web Application
 
+## Manual Development Mode
+
 Start the backend:
 
 ```bash
@@ -512,6 +585,20 @@ npm run dev
 ```
 
 The backend exposes the API used by the web interface.
+
+## Docker Mode
+
+Alternatively, run the complete containerized application:
+
+```bash
+docker compose -f deployment/docker/docker-compose.yml up --build
+```
+
+Then open:
+
+```text
+http://localhost:3000
+```
 
 ---
 
@@ -531,6 +618,38 @@ pytest tests/test_retrieval.py -v
 pytest tests/test_pipeline.py -v
 ```
 
+The project includes automated tests for chunking, retrieval, and pipeline behavior.
+
+---
+
+# 🔄 Continuous Integration
+
+PrivaRepo includes a GitHub Actions workflow under:
+
+```text
+.github/
+└── workflows/
+    └── ci.yml
+```
+
+The CI workflow runs on pushes and pull requests targeting the `main` branch.
+
+The workflow performs:
+
+```text
+Checkout repository
+        ↓
+Set up Python 3.11
+        ↓
+Install dependencies
+        ↓
+Ruff linting
+        ↓
+pytest test suite
+```
+
+This provides automated code-quality and test validation for repository changes.
+
 ---
 
 # 🗂️ Project Structure
@@ -538,7 +657,12 @@ pytest tests/test_pipeline.py -v
 ```text
 LocalRAG/
 │
+├── .github/
+│   └── workflows/
+│       └── ci.yml
+│
 ├── app/
+│   ├── core/
 │   ├── routers/
 │   │   ├── chat.py
 │   │   ├── indexing.py
@@ -546,6 +670,16 @@ LocalRAG/
 │   │   ├── search.py
 │   │   └── settings.py
 │   └── ...
+│
+├── deployment/
+│   └── docker/
+│       ├── backend.Dockerfile
+│       ├── backend.Dockerfile.dockerignore
+│       ├── docker-compose.yml
+│       ├── frontend.Dockerfile
+│       ├── frontend.Dockerfile.dockerignore
+│       ├── nginx.conf
+│       └── requirements.txt
 │
 ├── frontend/
 │
@@ -560,8 +694,29 @@ LocalRAG/
 ├── requirements.txt
 ├── tests/
 ├── images/
+├── pyproject.toml
 └── README.md
 ```
+
+---
+
+# 🖥️ Screenshots
+
+## User Interface
+
+![User Interface](images/user_interface.png)
+
+## Chat
+
+![Chat](images/chat_image.png)
+
+## Answer Generated
+
+![Answer Generated](images/answer_generating.png)
+
+## Repository
+
+![Repository](images/repository_image.png)
 
 ---
 
@@ -599,6 +754,12 @@ The project is designed around local code intelligence.
 
 Using Ollama allows the LLM inference stage to run locally, which is useful when working with private source repositories where sending code to a remote inference API is undesirable.
 
+## Why Docker?
+
+Docker provides a reproducible runtime environment for the backend and frontend services.
+
+The application can be started as a coordinated multi-container deployment while preserving local Ollama inference and persistent repository indexes.
+
 ---
 
 # 🔐 Privacy-Oriented Design
@@ -621,6 +782,8 @@ Local Answer
 
 No cloud-hosted LLM API is required for the core RAG workflow.
 
+Repository code can therefore remain within the local development environment while retrieval and generation are performed locally.
+
 ---
 
 # ⚠️ Current Limitations
@@ -632,6 +795,8 @@ Current evaluation shows that **retrieval quality is stronger than generation qu
 Some implementation-oriented questions can still retrieve related wrapper, documentation, or test chunks instead of the most specific implementation body.
 
 The system is therefore intended as a repository-grounded code intelligence assistant rather than a guarantee of perfect code understanding.
+
+Generation quality is also influenced by the capacity and context limitations of smaller local models.
 
 ---
 
